@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>hello popstate</div>
+    <button class="push">pushState</button>
+    <button class="forward">forward</button>
+    <button class="back">back</button>
+    <button class="history">history</button>
+    <script>
+        console.log('history', history);
+        window.addEventListener('popstate', function(e) {
+            console.log('event', e);
+        }, false);
+
+        document.querySelector('.push').addEventListener('click', function(e) {
+            history.pushState({name: 'jiavan'}, 'title', '?name=jiavan');
+            console.log(history);
+        }, false);
+
+        document.querySelector('.forward').addEventListener('click', function(e) {
+            history.forward();
+            console.log(history);
+        }, false);
+
+        document.querySelector('.back').addEventListener('click', function(e) {
+            history.back();
+            console.log(history);
+        }, false);
+
+        document.querySelector('.history').addEventListener('click', function(e) {
+            console.log(history);
+        }, false);
+    </script>
+</body>
+</html><ht
