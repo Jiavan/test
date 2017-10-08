@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../lib/normalize.css">
+    <style>
+        .box {
+            position: relative;
+            margin: auto;
+            width: 90%;
+            height: 500px;
+            background: #999;
+        }
+
+        .pack {
+            position: absolute;
+            display: block;
+            background: red;
+        }
+    </style>
+    <title>request animation frame</title>
+</head>
+<body>
+    <div class="box"></div>
+    <script>
+        // TODO: 
+        // 生成指定不重复的随机数
+        // requestAnimationFrame
+        // pack自动消失
+        // pack击中动画
+
+        var box = document.querySelector('.box'),
+            boxWidth = box.clientWidth;
+
+        function getUniquePosi(num) {
+            var positions = [],
+                random,
+                i = 0,
+                range = 30;
+
+            while (i < num) {
+                random = parseInt(Math.random() * (boxWidth - range), 10);
+
+                if (!positions.length) {
+                    positions.push(random);
+                    i++;
+                } else {
+                    for (var j = 0; j < positions.length; j++) {
+                        if ((random >= positions[j] && random <= positions[j] + range) ||
+                            ((random + range) >= positions[j] && random <= positions[j])) {
+                            break;
+                        }
+
+                        if (j === positions.length - 1) {
+                            positions.push(random);
+                            i++;
+                        }
+                    }
+                }
+            }
+
+            return positions;
+        }
+
+        function createPack(num) {
+            var pack,
+                fragment,
+                left,
+                top,
+                posi = [],
+                width = 20,
+                height = 20;
+
+                posi = getUniquePosi(num);
+                fragment = document.createDocumentFragment();
+            
+            for (var i = 0; i < num; i++) {
+                pack = document.createElement('span');
+                pack.classList.add('pack');
+                pack.style.width = width + 'px';
+                pack.style.height = height + 'px';
+                pack.style.left = posi[i] + 'px';
+                pack.style.top = '100px';
+
+                fragment.appendChild(pack);
+            }
+
+            box.appendChild(fragment);
+        }
+        createPack(4);
+    </script>
+</body>
+</html>
