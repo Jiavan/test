@@ -17,10 +17,12 @@
 
         .pack {
             position: absolute;
-            display: block;
+            top: -40px;
+            display: inline-block;
             width: 40px;
             height: 40px;
             background: red;
+            z-index: 10;
         }
     </style>
     <title>request animation frame</title>
@@ -43,6 +45,7 @@
         function Pack(obj) {
             var elInfo = this.getRandomInfo(),
                 el;
+
             obj = obj || {};
             this.left = obj.left || elInfo.left;
             this.top = obj.top || 0;
@@ -50,7 +53,6 @@
             this.el = document.createElement('span');
 
             this.el.classList.add('pack');
-            this.el.style.top = this.top + 'px';
             this.el.style.left = this.left + 'px';
             box.appendChild(this.el);
 
@@ -65,15 +67,15 @@
             render: function () {
                 if (this.alive()) {
                     this.top += this.speed;
-                    this.el.style.top = this.top + 'px';
+                    this.el.style.transform = 'translateY(' + this.top + 'px) translateZ(0)';
                 } else {
-                    this.el.remove();
+                    this.destory();
                 }
             },
             getRandomInfo: function() {
                 return {
                     left: parseInt(Math.random() * (boxWidth - packWidth), 10),
-                    speed: parseInt(Math.random() * 3 + 10, 10),
+                    speed: parseInt(Math.random() * 3 + 1, 10),
                 };
             },
             alive: function() {
