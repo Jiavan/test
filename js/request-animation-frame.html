@@ -12,11 +12,14 @@
             width: 90%;
             height: 500px;
             background: #999;
+            overflow: hidden;
         }
 
         .pack {
             position: absolute;
             display: block;
+            width: 40px;
+            height: 40px;
             background: red;
         }
     </style>
@@ -25,71 +28,152 @@
 <body>
     <div class="box"></div>
     <script>
-        // TODO: 
+        // TODO:
         // 生成指定不重复的随机数
         // requestAnimationFrame
         // pack自动消失
         // pack击中动画
 
         var box = document.querySelector('.box'),
-            boxWidth = box.clientWidth;
+            boxHeight = box.clientHeight;
+            boxWidth = box.clientWidth,
+            packWidth = 40,
+            packHeight = 40;
 
-        function getUniquePosi(num) {
-            var positions = [],
-                random,
-                i = 0,
-                range = 30;
+        function Pack(obj) {
+            var elInfo = this.getRandomInfo(),
+                el;
+            obj = obj || {};
+            this.left = obj.left || elInfo.left;
+            this.top = obj.top || 0;
+            this.speed = elInfo.speed;
+            this.el = document.createElement('span');
 
-            while (i < num) {
-                random = parseInt(Math.random() * (boxWidth - range), 10);
+            this.el.classList.add('pack');
+            this.el.style.top = this.top + 'px';
+            this.el.style.left = this.left + 'px';
+            box.appendChild(this.el);
 
-                if (!positions.length) {
-                    positions.push(random);
-                    i++;
+            el = this.el;
+            this.el.addEventListener('click', function(e) {
+                el.remove();
+            }, false);
+        }
+
+        Pack.prototype = {
+            constructor: Pack,
+            render: function () {
+                if (this.alive()) {
+                    this.top += this.speed;
+                    this.el.style.top = this.top + 'px';
                 } else {
-                    for (var j = 0; j < positions.length; j++) {
-                        if ((random >= positions[j] && random <= positions[j] + range) ||
-                            ((random + range) >= positions[j] && random <= positions[j])) {
-                            break;
-                        }
-
-                        if (j === positions.length - 1) {
-                            positions.push(random);
-                            i++;
-                        }
-                    }
+                    this.el.remove();
                 }
-            }
+            },
+            getRandomInfo: function() {
+                return {
+                    left: parseInt(Math.random() * (boxWidth - packWidth), 10),
+                    speed: parseInt(Math.random() * 3 + 10, 10),
+                };
+            },
+            alive: function() {
+                return !(this.top > boxHeight || this.left > boxWidth);
+            },
+            destory: function() {
+                this.el.remove();
+            },
+        };
 
-            return positions;
+
+        var packs = [];
+        function generatePacks() {
+            setInterval(function() {
+                var pack = new Pack();
+                packs.push(pack);
+            }, 200);
         }
 
-        function createPack(num) {
-            var pack,
-                fragment,
-                left,
-                top,
-                posi = [],
-                width = 20,
-                height = 20;
-
-                posi = getUniquePosi(num);
-                fragment = document.createDocumentFragment();
-            
-            for (var i = 0; i < num; i++) {
-                pack = document.createElement('span');
-                pack.classList.add('pack');
-                pack.style.width = width + 'px';
-                pack.style.height = height + 'px';
-                pack.style.left = posi[i] + 'px';
-                pack.style.top = '100px';
-
-                fragment.appendChild(pack);
-            }
-
-            box.appendChild(fragment);
+        function cleanPacks() {
+            packs.forEach(function(pack, index) {
+                if (!pack.alive) {
+                    pack.destory();
+                    packs.splice(index, 1);
+                }
+            });
         }
-        createPack(4);
+
+        function renderPacks() {
+            packs.forEach(function(pack) {
+                pack.render();
+            });
+        }
+
+        function animloop() {
+            cleanPacks();
+            renderPacks();
+            requestAnimationFrame(animloop);
+        }
+
+        generatePacks();
+        requestAnimationFrame(animloop);
+
+    </script>
+    <script>
+        //function getUniquePosi(num) {
+        //    var positions = [],
+        //        random,
+        //        i = 0,
+        //        range = 30;
+
+        //    while (i < num) {
+        //        random = parseInt(Math.random() * (boxWidth - range), 10);
+
+        //        if (!positions.length) {
+        //            positions.push(random);
+        //            i++;
+        //        } else {
+        //            for (var j = 0; j < positions.length; j++) {
+        //                if ((random >= positions[j] && random <= positions[j] + range) ||
+        //                    ((random + range) >= positions[j] && random <= positions[j])) {
+        //                    break;
+        //                }
+
+        //                if (j === positions.length - 1) {
+        //                    positions.push(random);
+        //                    i++;
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return positions;
+        //}
+
+        //function createPack(num) {
+        //    var pack,
+        //        fragment,
+        //        left,
+        //        top,
+        //        posi = [],
+        //        width = 20,
+        //        height = 20;
+
+        //        posi = getUniquePosi(num);
+        //        fragment = document.createDocumentFragment();
+        //
+        //    for (var i = 0; i < num; i++) {
+        //        pack = document.createElement('span');
+        //        pack.classList.add('pack');
+        //        pack.style.width = width + 'px';
+        //        pack.style.height = height + 'px';
+        //        pack.style.left = posi[i] + 'px';
+        //        pack.style.top = '100px';
+
+        //        fragment.appendChild(pack);
+        //    }
+
+        //    box.appendChild(fragment);
+        //}
     </script>
 </body>
 </html>
